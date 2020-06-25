@@ -30,17 +30,13 @@ class _WatchTabPageState extends State<WatchTabPage>
   @override
   void initState() {
     super.initState();
-    initFromDatabase();
-  }
 
-  void initFromDatabase() async {
-    final lastHistory = await getSleepHistoryDao().findLastSleepHistory();
-    if (lastHistory != null) {
+    getSleepHistoryDao().findLastSleepHistory().then((history) {
       setState(() {
+        _lastHistory = history;
         _loading = true;
-        _lastHistory = lastHistory;
       });
-    }
+    });
   }
 
   @override

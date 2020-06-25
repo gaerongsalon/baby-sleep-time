@@ -12,7 +12,7 @@ class SleepHistory {
 
   SleepHistory(this.yyyyMMdd, this.hhmmss, this.helpSeconds, this.sleepSeconds);
 
-  DateTime get start => DateTime.parse("${yyyyMMdd}T$hhmmss");
+  DateTime get start => fromyyyyMMddhhmmss(yyyyMMdd, hhmmss);
 }
 
 SleepHistory newSleepHistory(

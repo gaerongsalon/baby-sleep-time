@@ -1,10 +1,12 @@
 import 'package:baby_sleep_time/circle_button.dart';
 import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/history_item.dart';
+import 'package:baby_sleep_time/sleep_time_log.dart';
+import 'package:baby_sleep_time/loading_page.dart';
 import 'package:baby_sleep_time/sleep_history.dart';
+import 'package:baby_sleep_time/sleep_progress.dart';
 import 'package:baby_sleep_time/store.dart';
 import 'package:baby_sleep_time/watch_state.dart';
-import 'package:baby_sleep_time/stopwatch.dart';
+import 'package:baby_sleep_time/clock.dart';
 import 'package:flutter/material.dart';
 
 class WatchTabPage extends StatefulWidget {
@@ -30,12 +32,22 @@ class _WatchTabPageState extends State<WatchTabPage>
   @override
   void initState() {
     super.initState();
+    initAsync();
+  }
 
-    getSleepHistoryDao().findLastSleepHistory().then((history) {
-      setState(() {
-        _lastHistory = history;
-        _loading = true;
-      });
+  void initAsync() async {
+    final lastHistory = await getSleepHistoryDao().findLastSleepHistory();
+    final progress = await getSleepProgressDao().findSleepProgress();
+    setState(() {
+      _lastHistory = lastHistory;
+      if (progress != null) {
+        _state = progress.state;
+        _helpStart = progress.helpStart;
+        _sleepStart = progress.sleepStart;
+      } else {
+        _state = WatchState.Ready;
+      }
+      _loading = true;
     });
   }
 
@@ -43,7 +55,7 @@ class _WatchTabPageState extends State<WatchTabPage>
   Widget build(BuildContext context) {
     super.build(context);
     if (!_loading) {
-      return Container(color: Constants.BeigeColor);
+      return LoadingPage();
     }
     return Container(
       color: Constants.BeigeColor,
@@ -62,10 +74,10 @@ class _WatchTabPageState extends State<WatchTabPage>
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 48.0),
-            child: Stopwatch(
-              initialSeconds: _state == WatchState.Ready
-                  ? 0
-                  : DateTime.now().difference(_helpStart).inSeconds,
+            child: Clock(
+              startTime: _state == WatchState.Ready
+                  ? DateTime.now()
+                  : _state == WatchState.Help ? _helpStart : _sleepStart,
               initialGoing: _state != WatchState.Ready,
             ),
           ),
@@ -88,9 +100,21 @@ class _WatchTabPageState extends State<WatchTabPage>
   }
 
   Widget _buildLastHistory() {
-    return _lastHistory == null
-        ? Container()
-        : HistoryItem(sleepHistory: _lastHistory);
+    return _state != WatchState.Ready
+        ? SleepTimeLog(
+            startTime: _helpStart,
+            helpSeconds: _sleepStart != null
+                ? _sleepStart.difference(_helpStart).inSeconds
+                : -1,
+            sleepSeconds: -1,
+          )
+        : _lastHistory != null
+            ? SleepTimeLog(
+                startTime: _lastHistory.start,
+                helpSeconds: _lastHistory.helpSeconds,
+                sleepSeconds: _lastHistory.sleepSeconds,
+              )
+            : Container();
   }
 
   void _changeState() {
@@ -100,19 +124,25 @@ class _WatchTabPageState extends State<WatchTabPage>
           _helpStart = DateTime.now();
           _state = WatchState.Help;
         });
+        getSleepProgressDao().insertSleepProgress(newSleepProgress(
+            state: _state, helpStart: _helpStart, sleepStart: _sleepStart));
         break;
       case WatchState.Help:
         setState(() {
           _sleepStart = DateTime.now();
           _state = WatchState.Sleep;
         });
+        getSleepProgressDao().insertSleepProgress(newSleepProgress(
+            state: _state, helpStart: _helpStart, sleepStart: _sleepStart));
         break;
       case WatchState.Sleep:
         final candidate =
             newSleepHistory(helpStart: _helpStart, sleepStart: _sleepStart);
         if (candidate.helpSeconds > 0 || candidate.sleepSeconds > 0) {
           getSleepHistoryDao().insertSleepHistory(candidate);
+          updateLastSleepHistory(candidate);
         }
+        getSleepProgressDao().deleteAllSleepProgresses();
         setState(() {
           if (candidate.helpSeconds > 0 || candidate.sleepSeconds > 0) {
             _lastHistory = candidate;
@@ -123,6 +153,5 @@ class _WatchTabPageState extends State<WatchTabPage>
         });
         break;
     }
-    setState(() {});
   }
 }

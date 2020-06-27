@@ -1,4 +1,6 @@
 import 'package:baby_sleep_time/constants.dart';
+import 'package:baby_sleep_time/date_converter.dart';
+import 'package:baby_sleep_time/date_header.dart';
 import 'package:baby_sleep_time/generate_random_bar_chart_data.dart';
 import 'package:baby_sleep_time/stacked_bar_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -14,6 +16,7 @@ class ChartTabPage extends StatefulWidget {
 class _ChartTabPageState extends State<ChartTabPage> {
   List<BarChartGroupData> _data = [];
   bool _refresh = true;
+  int _yyyyMMdd = asyyyyMMdd(DateTime.now());
 
   @override
   void initState() {
@@ -48,10 +51,9 @@ class _ChartTabPageState extends State<ChartTabPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
-              child: Text("Jun 2020",
-                  style: TextStyle(fontSize: 24, color: Constants.IndigoColor)),
+            DateHeader(
+              yyyyMMdd: _yyyyMMdd,
+              onDateChanged: _updateDate,
             ),
             StackedBarChart(
               data: _data,
@@ -60,5 +62,11 @@ class _ChartTabPageState extends State<ChartTabPage> {
         ),
       ),
     );
+  }
+
+  void _updateDate(int yyyyMMdd) {
+    setState(() {
+      _yyyyMMdd = yyyyMMdd;
+    });
   }
 }

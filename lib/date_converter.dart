@@ -15,3 +15,7 @@ DateTime fromyyyyMMddhhmmss(int yyyyMMdd, int hhmmss) {
   final sixdigit = padded.length == 6 ? padded : padded.substring(1);
   return DateTime.parse("${yyyyMMdd}T$sixdigit");
 }
+
+int addDaysToyyyyMMdd(int yyyyMMdd, int days) {
+  return asyyyyMMdd(fromyyyyMMdd(yyyyMMdd).add(Duration(days: days)));
+}

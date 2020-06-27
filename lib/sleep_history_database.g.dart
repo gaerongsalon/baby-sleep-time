@@ -62,6 +62,8 @@ class _$SleepHistoryDatabase extends SleepHistoryDatabase {
 
   SleepHistoryDao _sleepHistoryDaoInstance;
 
+  SleepProgressDao _sleepProgressDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -81,6 +83,8 @@ class _$SleepHistoryDatabase extends SleepHistoryDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `SleepHistory` (`yyyyMMdd` INTEGER, `hhmmss` INTEGER, `helpSeconds` INTEGER, `sleepSeconds` INTEGER, PRIMARY KEY (`yyyyMMdd`, `hhmmss`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `SleepProgress` (`id` INTEGER, `stateName` TEXT, `helpStartyyyyMMdd` INTEGER, `helpStarthhmmss` INTEGER, `sleepStartyyyyMMdd` INTEGER, `sleepStarthhmmss` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -93,6 +97,12 @@ class _$SleepHistoryDatabase extends SleepHistoryDatabase {
     return _sleepHistoryDaoInstance ??=
         _$SleepHistoryDao(database, changeListener);
   }
+
+  @override
+  SleepProgressDao get sleepProgressDao {
+    return _sleepProgressDaoInstance ??=
+        _$SleepProgressDao(database, changeListener);
+  }
 }
 
 class _$SleepHistoryDao extends SleepHistoryDao {
@@ -101,6 +111,16 @@ class _$SleepHistoryDao extends SleepHistoryDao {
         _sleepHistoryInsertionAdapter = InsertionAdapter(
             database,
             'SleepHistory',
+            (SleepHistory item) => <String, dynamic>{
+                  'yyyyMMdd': item.yyyyMMdd,
+                  'hhmmss': item.hhmmss,
+                  'helpSeconds': item.helpSeconds,
+                  'sleepSeconds': item.sleepSeconds
+                }),
+        _sleepHistoryUpdateAdapter = UpdateAdapter(
+            database,
+            'SleepHistory',
+            ['yyyyMMdd', 'hhmmss'],
             (SleepHistory item) => <String, dynamic>{
                   'yyyyMMdd': item.yyyyMMdd,
                   'hhmmss': item.hhmmss,
@@ -132,6 +152,8 @@ class _$SleepHistoryDao extends SleepHistoryDao {
 
   final InsertionAdapter<SleepHistory> _sleepHistoryInsertionAdapter;
 
+  final UpdateAdapter<SleepHistory> _sleepHistoryUpdateAdapter;
+
   final DeletionAdapter<SleepHistory> _sleepHistoryDeletionAdapter;
 
   @override
@@ -156,14 +178,76 @@ class _$SleepHistoryDao extends SleepHistoryDao {
   }
 
   @override
+  Future<SleepHistory> findFirstSleepHistory() async {
+    return _queryAdapter.query(
+        'SELECT * FROM SleepHistory ORDER BY yyyyMMdd ASC, hhmmss ASC LIMIT 1',
+        mapper: _sleepHistoryMapper);
+  }
+
+  @override
   Future<void> insertSleepHistory(SleepHistory history) async {
     await _sleepHistoryInsertionAdapter.insert(
         history, OnConflictStrategy.abort);
   }
 
   @override
+  Future<void> updateSleepHistory(SleepHistory history) async {
+    await _sleepHistoryUpdateAdapter.update(history, OnConflictStrategy.abort);
+  }
+
+  @override
   Future<int> deleteSleepHistory(List<SleepHistory> histories) {
     return _sleepHistoryDeletionAdapter
         .deleteListAndReturnChangedRows(histories);
+  }
+}
+
+class _$SleepProgressDao extends SleepProgressDao {
+  _$SleepProgressDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _sleepProgressInsertionAdapter = InsertionAdapter(
+            database,
+            'SleepProgress',
+            (SleepProgress item) => <String, dynamic>{
+                  'id': item.id,
+                  'stateName': item.stateName,
+                  'helpStartyyyyMMdd': item.helpStartyyyyMMdd,
+                  'helpStarthhmmss': item.helpStarthhmmss,
+                  'sleepStartyyyyMMdd': item.sleepStartyyyyMMdd,
+                  'sleepStarthhmmss': item.sleepStarthhmmss
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _sleepProgressMapper = (Map<String, dynamic> row) =>
+      SleepProgress(
+          row['id'] as int,
+          row['stateName'] as String,
+          row['helpStartyyyyMMdd'] as int,
+          row['helpStarthhmmss'] as int,
+          row['sleepStartyyyyMMdd'] as int,
+          row['sleepStarthhmmss'] as int);
+
+  final InsertionAdapter<SleepProgress> _sleepProgressInsertionAdapter;
+
+  @override
+  Future<SleepProgress> findSleepProgress() async {
+    return _queryAdapter.query('SELECT * FROM SleepProgress LIMIT 1',
+        mapper: _sleepProgressMapper);
+  }
+
+  @override
+  Future<void> deleteAllSleepProgresses() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM SleepProgress');
+  }
+
+  @override
+  Future<void> insertSleepProgress(SleepProgress progress) async {
+    await _sleepProgressInsertionAdapter.insert(
+        progress, OnConflictStrategy.replace);
   }
 }

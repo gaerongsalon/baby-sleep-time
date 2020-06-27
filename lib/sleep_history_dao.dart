@@ -14,8 +14,14 @@ abstract class SleepHistoryDao {
       "SELECT * FROM SleepHistory ORDER BY yyyyMMdd DESC, hhmmss DESC LIMIT 1")
   Future<SleepHistory> findLastSleepHistory();
 
+  @Query("SELECT * FROM SleepHistory ORDER BY yyyyMMdd ASC, hhmmss ASC LIMIT 1")
+  Future<SleepHistory> findFirstSleepHistory();
+
   @insert
   Future<void> insertSleepHistory(SleepHistory history);
+
+  @update
+  Future<void> updateSleepHistory(SleepHistory history);
 
   @delete
   Future<int> deleteSleepHistory(List<SleepHistory> histories);

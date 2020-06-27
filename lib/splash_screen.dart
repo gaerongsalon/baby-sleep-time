@@ -15,9 +15,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    prepareStore().then((_) {
-      Navigator.of(context).pushReplacementNamed(Constants.HomeScreenName);
-    });
+    initAsync();
+  }
+
+  void initAsync() async {
+    await prepareStore();
+    await Future.delayed(Duration(seconds: 1));
+    Navigator.of(context).pushReplacementNamed(Constants.HomeScreenName);
   }
 
   @override

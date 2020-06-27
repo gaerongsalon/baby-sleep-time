@@ -2,41 +2,44 @@ import 'package:baby_sleep_time/constants.dart';
 import 'package:baby_sleep_time/print_duration.dart';
 import 'package:flutter/material.dart';
 
-class Stopwatch extends StatefulWidget {
-  final int initialSeconds;
+class Clock extends StatefulWidget {
+  final DateTime startTime;
   final bool initialGoing;
 
-  Stopwatch(
-      {Key key, @required this.initialSeconds, @required this.initialGoing})
+  Clock({Key key, @required this.startTime, @required this.initialGoing})
       : super(key: key);
 
   @override
-  _StopwatchState createState() => _StopwatchState();
+  _ClockState createState() => _ClockState();
 }
 
-class _StopwatchState extends State<Stopwatch> {
+class _ClockState extends State<Clock> {
   bool _timerGoing = false;
-  int _seconds = 0;
+  DateTime _startTime = DateTime.now();
+  Duration _currentSeconds = Duration(seconds: 0);
 
   @override
   void initState() {
     super.initState();
-    _seconds = widget.initialSeconds;
+    _startTime = widget.startTime;
+    _currentSeconds = DateTime.now().difference(_startTime);
     _timerGoing = widget.initialGoing;
     if (_timerGoing) {
-      _startFakeTimer();
+      _startClock();
     }
   }
 
   @override
-  void didUpdateWidget(Stopwatch oldWidget) {
+  void didUpdateWidget(Clock oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _seconds = widget.initialSeconds;
+    _startTime = widget.startTime;
+    _currentSeconds = DateTime.now().difference(_startTime);
+
     if (_timerGoing && !widget.initialGoing) {
       _timerGoing = false;
     } else if (!_timerGoing && widget.initialGoing) {
       _timerGoing = true;
-      _startFakeTimer();
+      _startClock();
     }
   }
 
@@ -46,12 +49,12 @@ class _StopwatchState extends State<Stopwatch> {
     _timerGoing = false;
   }
 
-  Future _startFakeTimer() async {
+  Future _startClock() async {
     while (_timerGoing) {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(milliseconds: 333));
       if (_timerGoing) {
         setState(() {
-          ++_seconds;
+          _currentSeconds = DateTime.now().difference(_startTime);
         });
       }
     }
@@ -60,7 +63,7 @@ class _StopwatchState extends State<Stopwatch> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      printDuration(Duration(seconds: this._seconds)),
+      printDuration(_currentSeconds),
       style: TextStyle(fontSize: 64, color: Constants.IndigoColor),
     );
   }

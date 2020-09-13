@@ -1,12 +1,13 @@
-import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/date_converter.dart';
-import 'package:baby_sleep_time/date_header.dart';
-import 'package:baby_sleep_time/sleep_time_log.dart';
-import 'package:baby_sleep_time/loading_page.dart';
-import 'package:baby_sleep_time/sleep_history.dart';
-import 'package:baby_sleep_time/store.dart';
-import 'package:baby_sleep_time/text_divider.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
+import '../../utils/date_converter.dart';
+import '../../models/sleep_history.dart';
+import '../../services/store/store.dart';
+import '../../components/date_header.dart';
+import '../../components/sleep_time_log.dart';
+import '../../components/loading_page.dart';
+import '../../components/text_divider.dart';
 
 class TableTabPage extends StatefulWidget {
   const TableTabPage({Key key}) : super(key: key);

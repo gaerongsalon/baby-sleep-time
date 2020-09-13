@@ -1,6 +1,7 @@
-import 'package:baby_sleep_time/date_converter.dart';
 import 'package:floor/floor.dart';
 import 'package:meta/meta.dart';
+
+import '../utils/date_converter.dart';
 
 @Entity(primaryKeys: ['yyyyMMdd', 'hhmmss'])
 class SleepHistory {

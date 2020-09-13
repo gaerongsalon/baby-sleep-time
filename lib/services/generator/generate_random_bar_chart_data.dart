@@ -1,8 +1,9 @@
 import 'dart:math';
 
-import 'package:baby_sleep_time/constants.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
 
 List<BarChartGroupData> generateRandomBarChartData() {
   final rand = Random();

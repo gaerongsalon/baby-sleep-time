@@ -1,5 +1,6 @@
-import 'package:baby_sleep_time/constants.dart';
 import 'package:flutter/material.dart';
+
+import '../constants.dart';
 
 class TextDivider extends StatelessWidget {
   final String text;

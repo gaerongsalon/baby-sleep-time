@@ -1,5 +1,6 @@
-import 'package:baby_sleep_time/sleep_history.dart';
 import 'package:floor/floor.dart';
+
+import '../../models/sleep_history.dart';
 
 @dao
 abstract class SleepHistoryDao {

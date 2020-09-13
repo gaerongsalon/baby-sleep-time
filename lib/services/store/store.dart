@@ -1,8 +1,9 @@
-import 'package:baby_sleep_time/sleep_history.dart';
-import 'package:baby_sleep_time/sleep_history_dao.dart';
-import 'package:baby_sleep_time/sleep_history_database.dart';
-import 'package:baby_sleep_time/sleep_progress_dao.dart';
 import 'package:floor/floor.dart';
+
+import '../../models/sleep_history.dart';
+import 'sleep_history_dao.dart';
+import 'sleep_history_database.dart';
+import 'sleep_progress_dao.dart';
 
 class Store {
   SleepHistoryDatabase database;

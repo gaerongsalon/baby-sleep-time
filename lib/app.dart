@@ -1,6 +1,7 @@
-import 'package:baby_sleep_time/home_screen.dart';
-import 'package:baby_sleep_time/splash_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'screens/home/home_screen.dart';
+import 'screens/splash/splash_screen.dart';
 
 class App extends StatelessWidget {
   @override

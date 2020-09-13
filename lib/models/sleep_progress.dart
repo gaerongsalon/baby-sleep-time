@@ -1,7 +1,8 @@
-import 'package:baby_sleep_time/date_converter.dart';
-import 'package:baby_sleep_time/watch_state.dart';
 import 'package:floor/floor.dart';
 import 'package:meta/meta.dart';
+
+import '../utils/date_converter.dart';
+import 'watch_state.dart';
 
 @Entity(primaryKeys: ['id'])
 class SleepProgress {

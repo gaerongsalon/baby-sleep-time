@@ -1,6 +1,7 @@
-import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/store.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
+import '../../services/store/store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({

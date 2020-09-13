@@ -1,7 +1,8 @@
-import 'package:baby_sleep_time/sleep_time_log_item.dart';
-import 'package:baby_sleep_time/text_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'sleep_time_log_item.dart';
+import 'text_divider.dart';
 
 class SleepTimeLog extends StatelessWidget {
   final DateTime startTime;

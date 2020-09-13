@@ -1,10 +1,11 @@
-import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/date_converter.dart';
-import 'package:baby_sleep_time/date_header.dart';
-import 'package:baby_sleep_time/generate_random_bar_chart_data.dart';
-import 'package:baby_sleep_time/stacked_bar_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
+import '../../utils/date_converter.dart';
+import '../../services/generator/generate_random_bar_chart_data.dart';
+import '../../components/date_header.dart';
+import 'components/stacked_bar_chart.dart';
 
 class ChartTabPage extends StatefulWidget {
   const ChartTabPage({Key key}) : super(key: key);

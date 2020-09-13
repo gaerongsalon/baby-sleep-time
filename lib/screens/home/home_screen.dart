@@ -1,8 +1,9 @@
-import 'package:baby_sleep_time/chart_tab_page.dart';
-import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/table_tab_page.dart';
-import 'package:baby_sleep_time/watch_tab_page.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
+import '../../tabs/chart/chart_tab_page.dart';
+import '../../tabs/table/table_tab_page.dart';
+import '../../tabs/watch/watch_tab_page.dart';
 
 class HomeScreen extends StatefulWidget {
   static const name = Constants.HomeScreenName;

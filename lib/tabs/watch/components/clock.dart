@@ -1,6 +1,7 @@
-import 'package:baby_sleep_time/constants.dart';
-import 'package:baby_sleep_time/print_duration.dart';
 import 'package:flutter/material.dart';
+
+import '../../../constants.dart';
+import '../../../utils/print_duration.dart';
 
 class Clock extends StatefulWidget {
   final DateTime startTime;

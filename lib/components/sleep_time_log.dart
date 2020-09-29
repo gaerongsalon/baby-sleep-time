@@ -41,7 +41,7 @@ class SleepTimeLog extends StatelessWidget {
         SleepTimeLogItem(
             seconds: sleepSeconds,
             icon: Icons.airline_seat_individual_suite,
-            time: showTime && helpSeconds > 0 && sleepSeconds > 0
+            time: showTime && helpSeconds > 0
                 ? startTime.add(Duration(seconds: helpSeconds + sleepSeconds))
                 : null)
       ],

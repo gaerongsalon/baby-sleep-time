@@ -20,7 +20,7 @@ class CircleButton extends StatelessWidget {
       fillColor: Constants.IndigoColor,
       child: Icon(
         this.icon,
-        size: 35.0,
+        size: 75.0,
         color: Constants.BeigeColor,
       ),
       padding: EdgeInsets.all(15.0),

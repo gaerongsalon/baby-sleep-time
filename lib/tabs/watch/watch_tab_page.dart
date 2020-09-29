@@ -68,8 +68,8 @@ class _WatchTabPageState extends State<WatchTabPage>
             padding: const EdgeInsets.only(bottom: 48.0),
             child: Text(
               _state == WatchState.Ready
-                  ? "시작해볼까요?"
-                  : _state == WatchState.Help ? "할 수 있어요!" : "잘자요!",
+                  ? "수면의식 시작해볼까요?"
+                  : _state == WatchState.Help ? "아이를 믿고 기다려봐요." : "수고했어요!",
               style: TextStyle(fontSize: 24, color: Constants.LightIndigoColor),
             ),
           ),
@@ -82,14 +82,28 @@ class _WatchTabPageState extends State<WatchTabPage>
               initialGoing: _state != WatchState.Ready,
             ),
           ),
-          CircleButton(
-            icon: _buildActionIcon(),
-            onPressed: _changeState,
-          ),
+          _buildActionButtons(),
           _buildLastHistory(),
         ],
       )),
     );
+  }
+
+  Widget _buildActionButtons() {
+    final actionButton = CircleButton(
+      icon: _buildActionIcon(),
+      onPressed: _changeState,
+    );
+    final cancelButton = CircleButton(
+      icon: Icons.highlight_off,
+      onPressed: _clearSleepContext,
+    );
+    return _state == WatchState.Ready
+        ? actionButton
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [cancelButton, actionButton],
+          );
   }
 
   IconData _buildActionIcon() {
@@ -142,17 +156,21 @@ class _WatchTabPageState extends State<WatchTabPage>
         if (candidate.helpSeconds > 0 || candidate.sleepSeconds > 0) {
           getSleepHistoryDao().insertSleepHistory(candidate);
           updateLastSleepHistory(candidate);
-        }
-        getSleepProgressDao().deleteAllSleepProgresses();
-        setState(() {
-          if (candidate.helpSeconds > 0 || candidate.sleepSeconds > 0) {
+          setState(() {
             _lastHistory = candidate;
-          }
-          _helpStart = null;
-          _sleepStart = null;
-          _state = WatchState.Ready;
-        });
+          });
+        }
+        _clearSleepContext();
         break;
     }
+  }
+
+  void _clearSleepContext() {
+    getSleepProgressDao().deleteAllSleepProgresses();
+    setState(() {
+      _helpStart = null;
+      _sleepStart = null;
+      _state = WatchState.Ready;
+    });
   }
 }

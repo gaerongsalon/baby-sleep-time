@@ -48,7 +48,10 @@ class _ChartTabPageState extends State<ChartTabPage> {
   Widget build(BuildContext context) {
     return Container(
       color: Constants.BeigeColor,
-      child: Center(
+      width: double.infinity,
+      height: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

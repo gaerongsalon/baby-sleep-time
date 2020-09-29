@@ -49,7 +49,7 @@ class _TableTabPageState extends State<TableTabPage> {
         itemBuilder: (context, listIndex) {
           return listIndex == 0
               ? _histories.length == 0 ? _buildEmpty() : _buildHeader()
-              : _buildItem(listIndex);
+              : _buildItem(listIndex - 1);
         },
         itemCount: _histories.length + 1,
       ),
@@ -77,13 +77,13 @@ class _TableTabPageState extends State<TableTabPage> {
     );
   }
 
-  Widget _buildItem(int listIndex) {
+  Widget _buildItem(int index) {
     return InkWell(
-      onLongPress: () => _deleteItem(_histories[listIndex - 1], listIndex - 1),
+      onLongPress: () => _deleteItem(_histories[index], index),
       child: SleepTimeLog(
-        startTime: _histories[listIndex - 1].start,
-        helpSeconds: _histories[listIndex - 1].helpSeconds,
-        sleepSeconds: _histories[listIndex - 1].sleepSeconds,
+        startTime: _histories[index].start,
+        helpSeconds: _histories[index].helpSeconds,
+        sleepSeconds: _histories[index].sleepSeconds,
         topMargin: 24,
         bottomMargin: 12,
         showTime: true,

@@ -14,6 +14,8 @@ class SleepHistory {
   SleepHistory(this.yyyyMMdd, this.hhmmss, this.helpSeconds, this.sleepSeconds);
 
   DateTime get start => fromyyyyMMddhhmmss(yyyyMMdd, hhmmss);
+
+  int get hour => hhmmss ~/ 10000;
 }
 
 SleepHistory newSleepHistory(

@@ -1,10 +1,25 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../../../services/chart/chart_data.dart';
+import '../../../utils/date_converter.dart';
 
 class StackedBarChart extends StatelessWidget {
-  final List<BarChartGroupData> data;
+  final int yyyyMMdd;
+  final List<ChartData> chartData;
+  final Color textColor;
+  final Color sleepColor;
+  final Color helpColor;
 
-  StackedBarChart({Key key, @required this.data}) : super(key: key);
+  StackedBarChart(
+      {Key key,
+      @required this.yyyyMMdd,
+      @required this.chartData,
+      @required this.textColor,
+      @required this.sleepColor,
+      @required this.helpColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +29,8 @@ class StackedBarChart extends StatelessWidget {
         padding: const EdgeInsets.only(top: 16.0),
         child: BarChart(
           BarChartData(
-            alignment: BarChartAlignment.center,
-            maxY: 45,
+            alignment: BarChartAlignment.spaceEvenly,
+            maxY: 16,
             barTouchData: BarTouchData(
               enabled: false,
             ),
@@ -23,37 +38,20 @@ class StackedBarChart extends StatelessWidget {
               show: true,
               bottomTitles: SideTitles(
                 showTitles: true,
-                textStyle:
-                    const TextStyle(color: Color(0xff939393), fontSize: 10),
+                textStyle: TextStyle(color: textColor, fontSize: 10),
                 margin: 10,
                 getTitles: (double value) {
-                  switch (value.toInt()) {
-                    case 0:
-                      return 'Apr';
-                    case 1:
-                      return 'May';
-                    case 2:
-                      return 'Jun';
-                    case 3:
-                      return 'Jul';
-                    case 4:
-                      return 'Aug';
-                    default:
-                      return '';
-                  }
+                  return DateFormat.MMMd().format(fromyyyyMMdd(yyyyMMdd)
+                      .add(Duration(days: value.toInt() - 6)));
                 },
               ),
               leftTitles: SideTitles(
                 showTitles: true,
-                textStyle: const TextStyle(
-                    color: Color(
-                      0xff939393,
-                    ),
-                    fontSize: 10),
+                textStyle: TextStyle(color: textColor, fontSize: 10),
                 getTitles: (double value) {
                   return value.toInt().toString();
                 },
-                interval: 10,
+                interval: 2,
                 margin: 0,
               ),
             ),
@@ -61,18 +59,37 @@ class StackedBarChart extends StatelessWidget {
               show: false,
               checkToShowHorizontalLine: (value) => value % 10 == 0,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: const Color(0xffe7e8ec),
-                strokeWidth: 1,
+                color: textColor,
+                strokeWidth: 5,
               ),
             ),
             borderData: FlBorderData(
               show: false,
             ),
-            groupsSpace: 4,
-            barGroups: data,
+            barGroups: _generateChartGroupData(),
           ),
         ),
       ),
     );
+  }
+
+  List<BarChartGroupData> _generateChartGroupData() {
+    final data = <BarChartGroupData>[];
+    var x = 0;
+    for (final each in chartData) {
+      data.add(BarChartGroupData(x: x, barRods: [
+        BarChartRodData(
+            y: each.allSleepHours + each.allHelpHours,
+            width: 40,
+            rodStackItems: [
+              BarChartRodStackItem(0, each.allSleepHours, sleepColor),
+              BarChartRodStackItem(each.allSleepHours,
+                  each.allSleepHours + each.allHelpHours, helpColor),
+            ],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)))
+      ]));
+      ++x;
+    }
+    return data;
   }
 }

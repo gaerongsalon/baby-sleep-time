@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/date_converter.dart';
+import '../../components/date_header.dart';
+import '../../components/loading_page.dart';
+import '../../components/prompt_dialog.dart';
+import '../../components/sleep_time_log.dart';
+import '../../components/text_divider.dart';
 import '../../models/sleep_history.dart';
 import '../../services/store/store.dart';
-import '../../components/date_header.dart';
-import '../../components/sleep_time_log.dart';
-import '../../components/loading_page.dart';
-import '../../components/text_divider.dart';
+import '../../utils/date_converter.dart';
 
 class TableTabPage extends StatefulWidget {
   const TableTabPage({Key key}) : super(key: key);
@@ -89,34 +90,19 @@ class _TableTabPageState extends State<TableTabPage> {
     );
   }
 
-  void _deleteItem(SleepHistory history, int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("삭제할까요?"),
-          content: Text("선택한 항목을 삭제합니다."),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("삭제", style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                getSleepHistoryDao().deleteSleepHistory([history]).then((_) {
-                  setState(() {
-                    _histories.removeAt(index);
-                  });
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text("취소"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void _deleteItem(SleepHistory history, int index) async {
+    if ((await promptDialog(
+            context: context,
+            title: "삭제할까요?",
+            body: "선택한 항목을 삭제합니다.",
+            yes: "삭제",
+            no: "취소")) ==
+        true) {
+      getSleepHistoryDao().deleteSleepHistory([history]).then((_) {
+        setState(() {
+          _histories.removeAt(index);
+        });
+      });
+    }
   }
 }

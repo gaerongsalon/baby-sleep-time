@@ -26,4 +26,7 @@ abstract class SleepHistoryDao {
 
   @delete
   Future<int> deleteSleepHistory(List<SleepHistory> histories);
+
+  @Query("DELETE FROM SleepHistory")
+  Future<void> deleteAllSleepHistories();
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'theme/theme_config.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/splash/splash_screen.dart';
+import 'theme/theme_config.dart';
 
 class App extends StatefulWidget {
   App({Key key}) : super(key: key);

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../components/circle_button.dart';
-import '../../components/sleep_time_log.dart';
 import '../../components/loading_page.dart';
+import '../../components/prompt_dialog.dart';
+import '../../components/sleep_time_log.dart';
 import '../../models/sleep_history.dart';
 import '../../models/sleep_progress.dart';
-import '../../services/store/store.dart';
 import '../../models/watch_state.dart';
+import '../../services/debug/clear_database.dart';
+import '../../services/debug/generate_test_data.dart';
+import '../../services/store/store.dart';
 import 'components/clock.dart';
 
 class WatchTabPage extends StatefulWidget {
@@ -62,28 +65,40 @@ class _WatchTabPageState extends State<WatchTabPage>
           child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 48.0),
-            child: Text(
-              _state == WatchState.Ready
-                  ? "수면의식 시작해볼까요?"
-                  : _state == WatchState.Help ? "아이를 믿고 기다려봐요." : "수고했어요!",
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 48.0),
-            child: Clock(
-              startTime: _state == WatchState.Ready
-                  ? DateTime.now()
-                  : _state == WatchState.Help ? _helpStart : _sleepStart,
-              initialGoing: _state != WatchState.Ready,
-            ),
-          ),
+          GestureDetector(
+              onLongPress: () => _debugAction(context, generateTestData),
+              child: _buildTitle()),
+          GestureDetector(
+              onLongPress: () => _debugAction(context, _clearDatabase),
+              child: _buildClock()),
           _buildActionButtons(),
           _buildLastHistory(),
         ],
       )),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 48.0),
+      child: Text(
+        _state == WatchState.Ready
+            ? "수면의식 시작해볼까요?"
+            : _state == WatchState.Help ? "아이를 믿고 기다려봐요." : "수고했어요!",
+        style: TextStyle(fontSize: 24),
+      ),
+    );
+  }
+
+  Widget _buildClock() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 48.0),
+      child: Clock(
+        startTime: _state == WatchState.Ready
+            ? DateTime.now()
+            : _state == WatchState.Help ? _helpStart : _sleepStart,
+        initialGoing: _state != WatchState.Ready,
+      ),
     );
   }
 
@@ -170,5 +185,24 @@ class _WatchTabPageState extends State<WatchTabPage>
       _sleepStart = null;
       _state = WatchState.Ready;
     });
+  }
+
+  void _debugAction(BuildContext context, Future<void> Function() act) async {
+    if ((await promptDialog(
+            context: context,
+            title: "디버그",
+            body: "디버그",
+            yes: "네",
+            no: "아니오")) ==
+        true) {
+      await act();
+      setState(() {});
+    }
+  }
+
+  Future<void> _clearDatabase() async {
+    print("Clear all database!");
+    _clearSleepContext();
+    await clearDatabase();
   }
 }

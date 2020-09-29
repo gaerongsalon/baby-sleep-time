@@ -185,6 +185,11 @@ class _$SleepHistoryDao extends SleepHistoryDao {
   }
 
   @override
+  Future<void> deleteAllSleepHistories() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM SleepHistory');
+  }
+
+  @override
   Future<void> insertSleepHistory(SleepHistory history) async {
     await _sleepHistoryInsertionAdapter.insert(
         history, OnConflictStrategy.abort);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
-import '../../theme/theme_config.dart';
 import '../../services/store/store.dart';
+import '../../theme/theme_config.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({

@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fl_chart:
+  shared_preferences: ^0.5.12
+  fl_chart: ^0.11.1
   intl:
   path_provider:
   floor: ^0.14.0

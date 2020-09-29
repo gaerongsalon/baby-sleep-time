@@ -13,7 +13,7 @@ List<BarChartGroupData> generateRandomBarChartData() {
       final second = rand.nextInt(20).toDouble();
       rods.add(BarChartRodData(
           y: first + second,
-          rodStackItem: [
+          rodStackItems: [
             BarChartRodStackItem(0, first, Colors.black38),
             BarChartRodStackItem(first, first + second, Colors.black87),
           ],

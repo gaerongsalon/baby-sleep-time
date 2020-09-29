@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import '../../theme/theme_config.dart';
 import '../../services/store/store.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void initAsync() async {
+    await currentTheme.loadTheme();
     await prepareStore();
     await Future.delayed(Duration(seconds: 1));
     Navigator.of(context).pushReplacementNamed(Constants.HomeScreenName);

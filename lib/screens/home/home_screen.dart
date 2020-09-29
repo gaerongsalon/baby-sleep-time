@@ -4,6 +4,7 @@ import '../../constants.dart';
 import '../../tabs/chart/chart_tab_page.dart';
 import '../../tabs/table/table_tab_page.dart';
 import '../../tabs/watch/watch_tab_page.dart';
+import '../../theme/theme_config.dart';
 
 class HomeScreen extends StatefulWidget {
   static const name = Constants.HomeScreenName;
@@ -56,6 +57,22 @@ class _HomeScreenState extends State<HomeScreen> {
           // )
         ],
       ),
+      floatingActionButton: Column(
+        children: [
+          SizedBox(height: 18),
+          FloatingActionButton(
+            mini: true,
+            child: Icon(currentTheme.isDark ? Icons.timelapse : Icons.wb_sunny),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Theme.of(context).textTheme.bodyText1.color,
+            onPressed: () {
+              currentTheme.switchTheme();
+            },
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
 import '../../utils/date_converter.dart';
 import '../../models/sleep_history.dart';
 import '../../services/store/store.dart';
@@ -43,7 +42,6 @@ class _TableTabPageState extends State<TableTabPage> {
       return LoadingPage();
     }
     return Container(
-      color: Constants.BeigeColor,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 32.0),
         itemBuilder: (context, listIndex) {
@@ -111,7 +109,7 @@ class _TableTabPageState extends State<TableTabPage> {
               },
             ),
             FlatButton(
-              child: Text("취소", style: TextStyle(color: Constants.IndigoColor)),
+              child: Text("취소"),
               onPressed: () {
                 Navigator.of(context).pop();
               },

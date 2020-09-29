@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../components/circle_button.dart';
-import '../../constants.dart';
 import '../../components/sleep_time_log.dart';
 import '../../components/loading_page.dart';
 import '../../models/sleep_history.dart';
@@ -59,7 +58,6 @@ class _WatchTabPageState extends State<WatchTabPage>
       return LoadingPage();
     }
     return Container(
-      color: Constants.BeigeColor,
       child: Center(
           child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -70,7 +68,7 @@ class _WatchTabPageState extends State<WatchTabPage>
               _state == WatchState.Ready
                   ? "수면의식 시작해볼까요?"
                   : _state == WatchState.Help ? "아이를 믿고 기다려봐요." : "수고했어요!",
-              style: TextStyle(fontSize: 24, color: Constants.LightIndigoColor),
+              style: TextStyle(fontSize: 24),
             ),
           ),
           Padding(

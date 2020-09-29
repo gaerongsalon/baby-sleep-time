@@ -27,25 +27,26 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Constants.IndigoColor,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              "assets/images/avatar.png",
-              width: 240,
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  "assets/images/avatar.png",
+                  width: 240,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 32.0),
+                  child: Text("자장자장",
+                      style: TextStyle(
+                          decoration: TextDecoration.none, fontSize: 24.0)),
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 32.0),
-              child: Text("자장자장",
-                  style: TextStyle(
-                      color: Colors.white,
-                      decoration: TextDecoration.none,
-                      fontSize: 24.0)),
-            )
-          ],
+          ),
         ),
       ),
     );

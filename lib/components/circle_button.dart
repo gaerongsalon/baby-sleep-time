@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-
 class CircleButton extends StatelessWidget {
   final IconData icon;
   final void Function() onPressed;
@@ -14,15 +12,14 @@ class CircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
+    return MaterialButton(
       onPressed: this.onPressed,
-      elevation: 2.0,
-      fillColor: Constants.IndigoColor,
       child: Icon(
         this.icon,
         size: 75.0,
-        color: Constants.BeigeColor,
       ),
+      elevation: 2.0,
+      color: Theme.of(context).buttonColor,
       padding: EdgeInsets.all(15.0),
       shape: CircleBorder(),
     );

@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
 import '../../utils/date_converter.dart';
 import '../../services/generator/generate_random_bar_chart_data.dart';
 import '../../components/date_header.dart';
@@ -47,7 +46,6 @@ class _ChartTabPageState extends State<ChartTabPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Constants.BeigeColor,
       width: double.infinity,
       height: double.infinity,
       child: Padding(

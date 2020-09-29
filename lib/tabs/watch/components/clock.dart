@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
 import '../../../utils/print_duration.dart';
 
 class Clock extends StatefulWidget {
@@ -65,7 +64,7 @@ class _ClockState extends State<Clock> {
   Widget build(BuildContext context) {
     return Text(
       printDuration(_currentSeconds),
-      style: TextStyle(fontSize: 64, color: Constants.IndigoColor),
+      style: TextStyle(fontSize: 64),
     );
   }
 }

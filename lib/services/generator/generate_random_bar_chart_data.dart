@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
-
 List<BarChartGroupData> generateRandomBarChartData() {
   final rand = Random();
   final data = <BarChartGroupData>[];
@@ -16,9 +14,8 @@ List<BarChartGroupData> generateRandomBarChartData() {
       rods.add(BarChartRodData(
           y: first + second,
           rodStackItem: [
-            BarChartRodStackItem(0, first, Constants.IndigoColor),
-            BarChartRodStackItem(
-                first, first + second, Constants.LightIndigoColor),
+            BarChartRodStackItem(0, first, Colors.black38),
+            BarChartRodStackItem(first, first + second, Colors.black87),
           ],
           borderRadius: const BorderRadius.all(Radius.zero)));
     }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../constants.dart';
 import '../utils/print_duration.dart';
 
 const invalidTime = '--:--:--';
@@ -38,7 +37,7 @@ class SleepTimeLogItem extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0, right: 24.0),
       child: Text(
         DateFormat.jms().format(this.time),
-        style: TextStyle(fontSize: 14, color: Constants.LightIndigoColor),
+        style: TextStyle(fontSize: 14),
       ),
     );
   }
@@ -48,7 +47,7 @@ class SleepTimeLogItem extends StatelessWidget {
       seconds < 0
           ? invalidTime
           : printDuration(Duration(seconds: this.seconds)),
-      style: TextStyle(fontSize: 28, color: Constants.LightIndigoColor),
+      style: TextStyle(fontSize: 28),
     );
   }
 
@@ -57,7 +56,7 @@ class SleepTimeLogItem extends StatelessWidget {
       padding: this.time != null
           ? const EdgeInsets.only(left: 32.0)
           : const EdgeInsets.only(left: 48.0),
-      child: Icon(this.icon, size: 40.0, color: Constants.IndigoColor),
+      child: Icon(this.icon, size: 40.0),
     );
   }
 }

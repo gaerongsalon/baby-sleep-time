@@ -51,6 +51,7 @@ class _ChartTabPageState extends State<ChartTabPage> {
               yyyyMMdd: _yyyyMMdd,
               onDateChanged: _updateDate,
             ),
+            SizedBox(height: 24),
             Stack(children: [
               StackedBarChart(
                 yyyyMMdd: _yyyyMMdd,
@@ -70,7 +71,8 @@ class _ChartTabPageState extends State<ChartTabPage> {
                 ),
               )
             ]),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
+            Divider(),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -83,7 +85,7 @@ class _ChartTabPageState extends State<ChartTabPage> {
                         "수면 횟수는", averageSleepCount, "번", theme.accentColor))
                     ..addAll(_buildStatText("도움 시간은", averageHelpMinutes,
                         "분 입니다.", theme.accentColor)),
-                  style: TextStyle(fontSize: 20.0))),
+                  style: TextStyle(fontSize: 20.0, height: 1.8))),
             )
           ],
         ),

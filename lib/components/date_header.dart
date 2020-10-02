@@ -1,3 +1,4 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +22,7 @@ class DateHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: Icon(Icons.chevron_left),
+            icon: Icon(FluentSystemIcons.ic_fluent_chevron_left_filled),
             iconSize: 32.0,
             onPressed: () {
               this.onDateChanged(addDaysToyyyyMMdd(this.yyyyMMdd, -1));
@@ -45,7 +46,7 @@ class DateHeader extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.chevron_right),
+            icon: Icon(FluentSystemIcons.ic_fluent_chevron_right_filled),
             iconSize: 32.0,
             onPressed: () {
               this.onDateChanged(addDaysToyyyyMMdd(this.yyyyMMdd, 1));

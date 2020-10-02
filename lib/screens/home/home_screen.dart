@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_icons/fluentui_icons.dart';
 
 import '../../constants.dart';
 import '../../tabs/chart/chart_tab_page.dart';
@@ -41,15 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           const BottomNavigationBarItem(
             title: Text("기록"),
-            icon: const Icon(Icons.watch_later),
+            icon: const Icon(FluentSystemIcons.ic_fluent_clock_filled),
           ),
           const BottomNavigationBarItem(
             title: Text("일지"),
-            icon: const Icon(Icons.assignment),
+            icon: const Icon(FluentSystemIcons.ic_fluent_clipboard_text_filled),
           ),
           const BottomNavigationBarItem(
             title: Text("통계"),
-            icon: const Icon(Icons.trending_up),
+            icon: const Icon(FluentSystemIcons.ic_fluent_poll_filled),
           ),
           // const BottomNavigationBarItem(
           //   title: Text("설정"),
@@ -62,7 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 18),
           FloatingActionButton(
             mini: true,
-            child: Icon(currentTheme.isDark ? Icons.timelapse : Icons.wb_sunny),
+            child: Icon(currentTheme.isDark
+                ? FluentSystemIcons.ic_fluent_weather_moon_regular
+                : FluentSystemIcons.ic_fluent_weather_sunny_regular),
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: Theme.of(context).textTheme.bodyText1.color,

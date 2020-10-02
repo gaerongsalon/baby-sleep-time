@@ -1,3 +1,4 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/circle_button.dart';
@@ -108,7 +109,7 @@ class _WatchTabPageState extends State<WatchTabPage>
       onPressed: _changeState,
     );
     final cancelButton = CircleButton(
-      icon: Icons.highlight_off,
+      icon: FluentSystemIcons.ic_fluent_dismiss_regular,
       onPressed: _clearSleepContext,
     );
     return _state == WatchState.Ready
@@ -121,10 +122,10 @@ class _WatchTabPageState extends State<WatchTabPage>
 
   IconData _buildActionIcon() {
     return _state == WatchState.Ready
-        ? Icons.play_arrow
+        ? FluentSystemIcons.ic_fluent_weather_moon_regular
         : _state == WatchState.Help
-            ? Icons.airline_seat_individual_suite
-            : Icons.assistant_photo;
+            ? FluentSystemIcons.ic_fluent_people_regular
+            : FluentSystemIcons.ic_fluent_sleep_regular;
   }
 
   Widget _buildLastHistory() {

@@ -1,3 +1,4 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,13 +35,13 @@ class SleepTimeLog extends StatelessWidget {
         ),
         SleepTimeLogItem(
             seconds: helpSeconds,
-            icon: Icons.child_care,
+            icon: FluentSystemIcons.ic_fluent_people_regular,
             time: showTime && helpSeconds > 0
                 ? startTime.add(Duration(seconds: helpSeconds))
                 : null),
         SleepTimeLogItem(
             seconds: sleepSeconds,
-            icon: Icons.airline_seat_individual_suite,
+            icon: FluentSystemIcons.ic_fluent_sleep_regular,
             time: showTime && helpSeconds > 0
                 ? startTime.add(Duration(seconds: helpSeconds + sleepSeconds))
                 : null)

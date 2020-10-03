@@ -16,12 +16,14 @@ Future<void> generateTestData() async {
     final sleepSeconds = sleepHour * 60 * 60 + 15 * 60 + rand.nextInt(30 * 60);
     print("[$date] help=$helpSeconds seconds, sleep=$sleepSeconds seconds.");
 
-    date = date.add(Duration(seconds: helpSeconds + sleepSeconds));
-    if (now.difference(date).inSeconds > 0) {
-      await getSleepHistoryDao().insertSleepHistory(SleepHistory(
-          asyyyyMMdd(date), ashhmmss(date), helpSeconds, sleepSeconds));
+    final nextDate = date.add(Duration(seconds: helpSeconds + sleepSeconds));
+    if (now.difference(nextDate).inSeconds <= 0) {
+      break;
     }
 
+    await getSleepHistoryDao().insertSleepHistory(SleepHistory(
+        asyyyyMMdd(date), ashhmmss(date), helpSeconds, sleepSeconds));
+    date = nextDate;
     final wakeUpMinutes = date.hour >= 0 && date.hour < 5
         ? 30 + rand.nextInt(30)
         : 90 + rand.nextInt(150);

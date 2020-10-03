@@ -9,9 +9,14 @@ class SleepTimeLogItem extends StatelessWidget {
   final int seconds;
   final IconData icon;
   final DateTime time;
+  final bool withSeconds;
 
   const SleepTimeLogItem(
-      {Key key, @required this.seconds, @required this.icon, this.time})
+      {Key key,
+      @required this.seconds,
+      @required this.icon,
+      this.time,
+      this.withSeconds = true})
       : super(key: key);
 
   @override
@@ -46,7 +51,8 @@ class SleepTimeLogItem extends StatelessWidget {
     return Text(
       seconds < 0
           ? invalidTime
-          : printDuration(Duration(seconds: this.seconds)),
+          : printDuration(Duration(seconds: this.seconds),
+              withSeconds: withSeconds),
       style: TextStyle(fontSize: 28),
     );
   }

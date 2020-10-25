@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/circle_button.dart';
 import '../../components/loading_page.dart';
 import '../../components/prompt_dialog.dart';
+import '../../components/show_coach.dart';
 import '../../components/sleep_time_log.dart';
 import '../../models/sleep_history.dart';
 import '../../models/sleep_progress.dart';
@@ -11,6 +14,7 @@ import '../../models/watch_state.dart';
 import '../../services/debug/clear_database.dart';
 import '../../services/debug/generate_test_data.dart';
 import '../../services/store/store.dart';
+import '../../services/store/tip_state.dart';
 import 'components/clock.dart';
 
 class WatchTabPage extends StatefulWidget {
@@ -29,6 +33,10 @@ class _WatchTabPageState extends State<WatchTabPage>
 
   bool _loading = false;
   SleepHistory _lastHistory;
+
+  final _actionGlobalKey = GlobalKey();
+  final _cancelGlobalKey = GlobalKey();
+  final _sleepLogGlobalKey = GlobalKey();
 
   @override
   bool get wantKeepAlive => true;
@@ -53,6 +61,8 @@ class _WatchTabPageState extends State<WatchTabPage>
       }
       _loading = true;
     });
+
+    _showStartButtonCoach();
   }
 
   @override
@@ -67,10 +77,12 @@ class _WatchTabPageState extends State<WatchTabPage>
         mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
-              onLongPress: () => _debugAction(context, generateTestData),
+              onLongPress: () => _debugAction(
+                  context: context, text: "테스트 데이터 생성", act: generateTestData),
               child: _buildTitle()),
           GestureDetector(
-              onLongPress: () => _debugAction(context, _clearDatabase),
+              onLongPress: () => _debugAction(
+                  context: context, text: "모든 데이터 삭제", act: _clearDatabase),
               child: _buildClock()),
           _buildActionButtons(),
           _buildLastHistory(),
@@ -105,10 +117,12 @@ class _WatchTabPageState extends State<WatchTabPage>
 
   Widget _buildActionButtons() {
     final actionButton = CircleButton(
+      key: _actionGlobalKey,
       icon: _buildActionIcon(),
       onPressed: _changeState,
     );
     final cancelButton = CircleButton(
+      key: _cancelGlobalKey,
       icon: FluentSystemIcons.ic_fluent_dismiss_regular,
       onPressed: _clearSleepContext,
     );
@@ -131,6 +145,7 @@ class _WatchTabPageState extends State<WatchTabPage>
   Widget _buildLastHistory() {
     return _state != WatchState.Ready
         ? SleepTimeLog(
+            key: _sleepLogGlobalKey,
             startTime: _helpStart,
             helpSeconds: _sleepStart != null
                 ? _sleepStart.difference(_helpStart).inSeconds
@@ -139,6 +154,7 @@ class _WatchTabPageState extends State<WatchTabPage>
           )
         : _lastHistory != null
             ? SleepTimeLog(
+                key: _sleepLogGlobalKey,
                 startTime: _lastHistory.start,
                 helpSeconds: _lastHistory.helpSeconds,
                 sleepSeconds: _lastHistory.sleepSeconds,
@@ -155,6 +171,7 @@ class _WatchTabPageState extends State<WatchTabPage>
         });
         getSleepProgressDao().insertSleepProgress(newSleepProgress(
             state: _state, helpStart: _helpStart, sleepStart: _sleepStart));
+        _showHelpButtonCoach();
         break;
       case WatchState.Help:
         setState(() {
@@ -163,6 +180,7 @@ class _WatchTabPageState extends State<WatchTabPage>
         });
         getSleepProgressDao().insertSleepProgress(newSleepProgress(
             state: _state, helpStart: _helpStart, sleepStart: _sleepStart));
+        _showSleepButtonCoach();
         break;
       case WatchState.Sleep:
         final candidate =
@@ -175,8 +193,48 @@ class _WatchTabPageState extends State<WatchTabPage>
           });
         }
         _clearSleepContext();
+        _showSleepLogCoach();
         break;
     }
+  }
+
+  void _showStartButtonCoach() {
+    TipState.instance.doIfPossible(TipState.recordStartKey, (mark) async {
+      await showCoach(
+          globalKey: _actionGlobalKey,
+          text: "아이가 스스로 잠들 수 있도록\n도와주는 수면 도움 시간을 기록해보세요");
+      mark();
+    });
+  }
+
+  void _showHelpButtonCoach() {
+    TipState.instance.doIfPossible(TipState.sleepStartButtonKey, (mark) async {
+      await showCoach(globalKey: _actionGlobalKey, text: "잠에 든다면 아이콘을 누르세요");
+      await showCoach(
+          globalKey: _cancelGlobalKey, text: "아이가 너무 힘들어 하면\n그만 둘 수 있어요");
+      mark();
+    });
+  }
+
+  void _showSleepButtonCoach() {
+    TipState.instance.doIfPossible(TipState.wakeupButtonKey, (mark) async {
+      await showCoach(globalKey: _actionGlobalKey, text: "잠에서 깨어났다면 아이콘을 누르세요");
+      mark();
+    });
+  }
+
+  void _showSleepLogCoach() {
+    TipState.instance.doIfPossible(TipState.firstRecordKey, (mark) async {
+      await showCoach(
+          globalKey: _sleepLogGlobalKey,
+          circle: false,
+          rectModifier: (rect) {
+            return Rect.fromLTWH(rect.left + 32.0, rect.top + 72.0,
+                rect.width - 64.0, rect.height - 72.0);
+          },
+          text: "첫 수면기록이 완성되었어요");
+      mark();
+    });
   }
 
   void _clearSleepContext() {
@@ -188,13 +246,14 @@ class _WatchTabPageState extends State<WatchTabPage>
     });
   }
 
-  void _debugAction(BuildContext context, Future<void> Function() act) async {
+  void _debugAction(
+      {BuildContext context, String text, Future<void> Function() act}) async {
+    if (!_isInDebugMode) {
+      return;
+    }
+
     if ((await promptDialog(
-            context: context,
-            title: "디버그",
-            body: "디버그",
-            yes: "네",
-            no: "아니오")) ==
+            context: context, title: "디버그", body: text, yes: "네", no: "아니오")) ==
         true) {
       await act();
       setState(() {});
@@ -205,5 +264,12 @@ class _WatchTabPageState extends State<WatchTabPage>
     print("Clear all database!");
     _clearSleepContext();
     await clearDatabase();
+    TipState.instance.resetAll();
+  }
+
+  bool get _isInDebugMode {
+    bool inDebugMode = false;
+    assert(inDebugMode = true);
+    return inDebugMode;
   }
 }

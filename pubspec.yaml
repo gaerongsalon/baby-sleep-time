@@ -18,6 +18,8 @@ dependencies:
   flutter_datetime_picker: ^1.4.0
   timeline_tile: ^1.0.0
   fluentui_icons: ^0.2.0
+  highlighter_coachmark: ^0.0.3
+  super_tooltip: ^0.9.6
 
 dev_dependencies:
   floor_generator: ^0.14.0

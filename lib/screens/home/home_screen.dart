@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../tabs/chart/chart_tab_page.dart';
@@ -52,10 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text("통계"),
             icon: const Icon(FluentSystemIcons.ic_fluent_poll_filled),
           ),
-          // const BottomNavigationBarItem(
-          //   title: Text("설정"),
-          //   icon: const Icon(Icons.settings),
-          // )
         ],
       ),
       floatingActionButton: Column(

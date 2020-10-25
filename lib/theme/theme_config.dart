@@ -1,3 +1,3 @@
-import './my_theme.dart';
+import 'my_theme.dart';
 
 MyTheme currentTheme = MyTheme();

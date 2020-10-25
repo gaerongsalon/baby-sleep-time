@@ -1,6 +1,8 @@
+import 'package:baby_sleep_time/services/store/tip_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/date_header.dart';
+import '../../components/tip_text.dart';
 import '../../services/chart/chart_data.dart';
 import '../../services/chart/generate_chart_data.dart';
 import '../../utils/date_converter.dart';
@@ -59,6 +61,7 @@ class _ChartTabPageState extends State<ChartTabPage> {
                 textColor: textColor,
                 sleepColor: sleepColor,
                 helpColor: helpColor,
+                tip: !TipState.instance.isShown(TipState.chartKey),
               ),
               Positioned(
                 top: 8,
@@ -86,7 +89,13 @@ class _ChartTabPageState extends State<ChartTabPage> {
                     ..addAll(_buildStatText("도움 시간은", averageHelpMinutes,
                         "분 입니다.", theme.accentColor)),
                   style: TextStyle(fontSize: 20.0, height: 1.8))),
-            )
+            ),
+            !TipState.instance.isShown(TipState.chartKey)
+                ? GestureDetector(
+                    onTap: () => setState(
+                        () => TipState.instance.markAsShown(TipState.chartKey)),
+                    child: TipText(text: "통계를 통해 수면 습관이 나아지고\n있는 걸 확인하세요."))
+                : Container(),
           ],
         ),
       ),

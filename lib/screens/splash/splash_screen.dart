@@ -1,3 +1,4 @@
+import 'package:baby_sleep_time/services/store/tip_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
@@ -22,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void initAsync() async {
     await currentTheme.loadTheme();
+    await TipState.instance.load();
     await prepareStore();
     await Future.delayed(Duration(seconds: 1));
     Navigator.of(context).pushReplacementNamed(Constants.HomeScreenName);

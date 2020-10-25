@@ -1,18 +1,17 @@
-import 'package:baby_sleep_time/utils/print_readable_duration.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../components/date_header.dart';
 import '../../components/loading_page.dart';
 import '../../components/prompt_dialog.dart';
-import '../../components/sleep_time_log.dart';
-import '../../components/sleep_time_log_item.dart';
 import '../../components/text_divider.dart';
+import '../../components/tip_text.dart';
 import '../../models/sleep_history.dart';
 import '../../services/store/store.dart';
+import '../../services/store/tip_state.dart';
 import '../../utils/date_converter.dart';
+import '../../utils/print_readable_duration.dart';
 
 class TableTabPage extends StatefulWidget {
   const TableTabPage({Key key}) : super(key: key);
@@ -25,6 +24,8 @@ class _TableTabPageState extends State<TableTabPage> {
   bool _loading = false;
   int _yyyyMMdd = asyyyyMMdd(DateTime.now());
   List<SleepHistory> _histories = [];
+
+  final _tableGlobalKey = GlobalKey();
 
   @override
   void initState() {
@@ -59,16 +60,24 @@ class _TableTabPageState extends State<TableTabPage> {
           _histories.length == 0
               ? _buildEmpty()
               : Expanded(child: _buildTable()),
+          !TipState.instance.isShown(TipState.tableKey)
+              ? GestureDetector(
+                  onTap: () => setState(
+                      () => TipState.instance.markAsShown(TipState.tableKey)),
+                  child: TipText(text: "하루 동안 아이의 수면 도움 행동 시간,\n수면 시간을 기록합니다."))
+              : Container(),
         ],
       ),
     );
   }
 
   Widget _buildEmpty() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: TextDivider(
-        text: "아직 기록이 없습니다.",
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: TextDivider(
+          text: "아직 기록이 없습니다.",
+        ),
       ),
     );
   }
@@ -85,6 +94,7 @@ class _TableTabPageState extends State<TableTabPage> {
       child: Padding(
         padding: const EdgeInsets.only(top: 24.0),
         child: Table(
+          key: _tableGlobalKey,
           columnWidths: {
             0: FlexColumnWidth(1.3),
             1: FlexColumnWidth(1.4),
@@ -107,10 +117,12 @@ class _TableTabPageState extends State<TableTabPage> {
                 _TextCell(
                   text: printReadableDuration(item.helpDuration),
                   fontWeight: FontWeight.bold,
+                  onLongPress: () => _deleteItem(item),
                 ),
                 _TextCell(
                   text: printReadableDuration(item.sleepDuration),
                   fontWeight: FontWeight.bold,
+                  onLongPress: () => _deleteItem(item),
                 ),
               ]))),
         ),

@@ -11,20 +11,22 @@ class StackedBarChart extends StatelessWidget {
   final Color textColor;
   final Color sleepColor;
   final Color helpColor;
+  final bool tip;
 
-  StackedBarChart(
-      {Key key,
-      @required this.yyyyMMdd,
-      @required this.chartData,
-      @required this.textColor,
-      @required this.sleepColor,
-      @required this.helpColor})
-      : super(key: key);
+  StackedBarChart({
+    Key key,
+    @required this.yyyyMMdd,
+    @required this.chartData,
+    @required this.textColor,
+    @required this.sleepColor,
+    @required this.helpColor,
+    this.tip = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1,
+      aspectRatio: tip ? 1.4 : 1.0,
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: BarChart(

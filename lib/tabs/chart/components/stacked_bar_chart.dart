@@ -40,7 +40,7 @@ class StackedBarChart extends StatelessWidget {
               show: true,
               bottomTitles: SideTitles(
                 showTitles: true,
-                textStyle: TextStyle(color: textColor, fontSize: 10),
+                getTextStyles: (_) => TextStyle(color: textColor, fontSize: 10),
                 margin: 10,
                 getTitles: (double value) {
                   return DateFormat.MMMd().format(fromyyyyMMdd(yyyyMMdd)
@@ -49,7 +49,7 @@ class StackedBarChart extends StatelessWidget {
               ),
               leftTitles: SideTitles(
                 showTitles: true,
-                textStyle: TextStyle(color: textColor, fontSize: 10),
+                getTextStyles: (_) => TextStyle(color: textColor, fontSize: 10),
                 getTitles: (double value) {
                   return value.toInt().toString();
                 },

@@ -16,13 +16,9 @@ class Store {
 var store = Store();
 
 Future prepareStore() async {
-  final migration1to2 = Migration(1, 2, (database) async {
-    // Add a new table: SleepProgress
-  });
-
   store.database = await $FloorSleepHistoryDatabase
-      .databaseBuilder('app_database.db')
-      .addMigrations([migration1to2]).build();
+      .databaseBuilder('sleeptime_v1.db')
+      .build();
   store.firstHistory =
       await store.database.sleepHistoryDao.findFirstSleepHistory();
   store.lastHistory =

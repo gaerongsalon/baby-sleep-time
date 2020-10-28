@@ -8,17 +8,20 @@ fi
 APP_NAME="baby-sleep-time"
 
 usage() {
-  echo "$0 [-s SERIAL] [-m SLACK_MESSAGE]"
+  echo "$0 [-s SERIAL] [-m SLACK_MESSAGE] [-r]"
   exit 0
 }
 
-while getopts ":s:m:" o; do
+while getopts ":s:m:r" o; do
   case "${o}" in
     s)
       SERIAL="${OPTARG}"
       ;;
     m)
       MESSAGE="${OPTARG}"
+      ;;
+    r)
+      RELEASE="1"
       ;;
     *)
       usage
@@ -59,3 +62,27 @@ if [ ! -z "${SLACK_HOOK_URL}" ]; then
     -d "{\"username\":\"앱 배포\",\"channel\":\"C0146N9AUGK\",\"icon_emoji\":\":man-running:\",\"text\":\"${SLACK_MESSAGE}\"}"
 fi
 
+if [ "${RELEASE}" = "1" ]; then
+  flutter build appbundle --release && \
+    curl -T build/app/outputs/bundle/release/app-release.aab "$( \
+      curl -XPUT \
+        "${DEPLOY_SERVICE}/android/${APP_NAME}-${SERIAL}.aab" \
+        -H "X-Auth-Token: ${DEPLOY_TOKEN}" \
+      | tr -d '"')" && \
+    curl -XGET "${DEPLOY_SERVICE}?count=1" | jq -r '.platforms.android[].url' | tee .lastDeployed
+
+  if [ $? -ne 0 ]; then
+    echo "Something wrong."
+    exit 1
+  fi
+
+  if [ ! -z "${SLACK_HOOK_URL}" ]; then
+    SLACK_MESSAGE="자장자장 출시 버전 등장!! 🎉🎉🎉 <${LAST_DEPLOYED}|DOWNLOAD>"
+    if [ ! -z "${MESSAGE}" ]; then
+      SLACK_MESSAGE="${SLACK_MESSAGE}\n${MESSAGE}"
+    fi
+    curl -XPOST "${SLACK_HOOK_URL}" \
+      -H "Content-Type: application/json" \
+      -d "{\"username\":\"앱 배포\",\"channel\":\"C0146N9AUGK\",\"icon_emoji\":\":man-running:\",\"text\":\"${SLACK_MESSAGE}\"}"
+  fi
+fi

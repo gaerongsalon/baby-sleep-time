@@ -2,7 +2,7 @@ name: baby_sleep_time
 description: Baby sleep time recorder
 publish_to: "none"
 
-version: 1.0.0+1
+version: 1.0.1+2
 environment:
   sdk: ">=2.7.0 <3.0.0"
 

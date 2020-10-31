@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [ -z "${DEPLOY_TOKEN}" ]; then
   echo "Error: Set DEPLOY_TOKEN first."
   exit 1
@@ -8,20 +10,21 @@ fi
 APP_NAME="baby-sleep-time"
 
 usage() {
-  echo "$0 [-s SERIAL] [-m SLACK_MESSAGE] [-r]"
+  echo "$0 [-s SERIAL] [-m SLACK_MESSAGE]"
   exit 0
 }
 
-while getopts ":s:m:r" o; do
+log() {
+  echo "[$(date)] $@"
+}
+
+while getopts ":s:m:" o; do
   case "${o}" in
     s)
       SERIAL="${OPTARG}"
       ;;
     m)
       MESSAGE="${OPTARG}"
-      ;;
-    r)
-      RELEASE="1"
       ;;
     *)
       usage
@@ -30,59 +33,60 @@ while getopts ":s:m:r" o; do
 done
 
 SERIAL="${SERIAL:-"$(date +"%Y%m%d_%H%M%S")"}"
+MESSAGE="${MESSAGE:-"버그 수정"}"
 
-echo "Start to deploy"
-echo " - SERIAL=${SERIAL}"
-echo " - MESSAGE=${MESSAGE}"
+log "Start to deploy"
+log " - SERIAL=${SERIAL}"
+log " - MESSAGE=${MESSAGE}"
 
 # https://github.com/yingyeothon/binary-distribution-api
 DEPLOY_SERVICE="https://api.yyt.life/d/${APP_NAME}"
 
-flutter build apk --release --split-per-abi --target-platform android-arm64 && \
-  curl -T build/app/outputs/apk/release/app-arm64-v8a-release.apk "$( \
-    curl -XPUT \
-      "${DEPLOY_SERVICE}/android/${APP_NAME}-${SERIAL}.apk" \
-      -H "X-Auth-Token: ${DEPLOY_TOKEN}" \
-    | tr -d '"')" && \
-  curl -XGET "${DEPLOY_SERVICE}?count=1" | jq -r '.platforms.android[].url' | tee .lastDeployed
+build_and_upload() {
+  local BUILD_NAME="$1"
+  local BUILD_OUTPUT="$2"
+  shift 2
 
-if [ $? -ne 0 ]; then
-  echo "Something wrong."
-  exit 1
-fi
-
-LAST_DEPLOYED="$(cat .lastDeployed)"
-if [ ! -z "${SLACK_HOOK_URL}" ]; then
-  SLACK_MESSAGE="자장자장 새 버전 출시! 👏👏👏 <${LAST_DEPLOYED}|DOWNLOAD>"
-  if [ ! -z "${MESSAGE}" ]; then
-    SLACK_MESSAGE="${SLACK_MESSAGE}\n${MESSAGE}"
-  fi
-  curl -XPOST "${SLACK_HOOK_URL}" \
-    -H "Content-Type: application/json" \
-    -d "{\"username\":\"앱 배포\",\"channel\":\"C0146N9AUGK\",\"icon_emoji\":\":man-running:\",\"text\":\"${SLACK_MESSAGE}\"}"
-fi
-
-if [ "${RELEASE}" = "1" ]; then
-  flutter build appbundle --release && \
-    curl -T build/app/outputs/bundle/release/app-release.aab "$( \
-      curl -XPUT \
-        "${DEPLOY_SERVICE}/android/${APP_NAME}-${SERIAL}.aab" \
+  flutter build $@ && \
+    curl -T "${BUILD_OUTPUT}" "$( \
+      curl -s -XPUT \
+        "${DEPLOY_SERVICE}/android/${BUILD_NAME}" \
         -H "X-Auth-Token: ${DEPLOY_TOKEN}" \
       | tr -d '"')" && \
-    curl -XGET "${DEPLOY_SERVICE}?count=1" | jq -r '.platforms.android[].url' | tee .lastDeployed
+    curl -s -XGET "${DEPLOY_SERVICE}?count=1" | jq -r '.platforms.android[].url'
+}
 
-  if [ $? -ne 0 ]; then
-    echo "Something wrong."
-    exit 1
-  fi
+BUILD_GRADLE="android/app/build.gradle"
+ANDROID_MANIFEST="android/app/src/main/AndroidManifest.xml"
 
-  if [ ! -z "${SLACK_HOOK_URL}" ]; then
-    SLACK_MESSAGE="자장자장 출시 버전 등장!! 🎉🎉🎉 <${LAST_DEPLOYED}|DOWNLOAD>"
-    if [ ! -z "${MESSAGE}" ]; then
-      SLACK_MESSAGE="${SLACK_MESSAGE}\n${MESSAGE}"
-    fi
-    curl -XPOST "${SLACK_HOOK_URL}" \
-      -H "Content-Type: application/json" \
-      -d "{\"username\":\"앱 배포\",\"channel\":\"C0146N9AUGK\",\"icon_emoji\":\":man-running:\",\"text\":\"${SLACK_MESSAGE}\"}"
-  fi
+git restore -- "${BUILD_GRADLE}" "${ANDROID_MANIFEST}"
+
+log "Build debug apk."
+sed -i 's/me.hoppipolla.baby_sleep_time/me.hoppipolla.baby_sleep_time_debug/g' "${BUILD_GRADLE}"
+sed -i 's/자장자장/자장자장_deubg/g' "${ANDROID_MANIFEST}"
+DEBUG_APK="$(build_and_upload "${APP_NAME}-${SERIAL}-debug.apk" "build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk" "apk --debug --split-per-abi --target-platform android-arm64" | tail -n1)"
+
+log "Build release apk."
+sed -i 's/me.hoppipolla.baby_sleep_time_debug/me.hoppipolla.baby_sleep_time/g' "${BUILD_GRADLE}"
+sed -i 's/자장자장_deubg/자장자장/g' "${ANDROID_MANIFEST}"
+RELEASE_APK="$(build_and_upload "${APP_NAME}-${SERIAL}-release.apk" "build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" "apk --release --split-per-abi --target-platform android-arm64" | tail -n1)"
+
+log "Build appbundle."
+APPBUNDLE="$(build_and_upload "${APP_NAME}-${SERIAL}.aab" "build/app/outputs/bundle/release/app-release.aab" "appbundle --release" | tail -n1)"
+
+log "Notify via Slack."
+if [ ! -z "${SLACK_HOOK_URL}" ]; then
+  MESSAGE_FILE="$(mktemp)"
+  cat <<EOF > "${MESSAGE_FILE}"
+*자장자장 새 버전 출시!* 👏👏👏
+${MESSAGE}
+
+  - <${DEBUG_APK}|DEBUG> 🎉
+  - <${RELEASE_APK}|RELEASE> 🎉
+  - <${APPBUNDLE}|APPBUNDLE> 🎉
+EOF
+  curl -XPOST "${SLACK_HOOK_URL}" \
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"앱 배포\",\"channel\":\"C0146N9AUGK\",\"icon_emoji\":\":man-running:\",\"text\":\"$(cat "${MESSAGE_FILE}")\"}"
+  rm -f "${MESSAGE_FILE}"
 fi

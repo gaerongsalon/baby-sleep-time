@@ -3,12 +3,12 @@ import 'dart:collection';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TipState {
-  static const recordStartKey = "tipstate.recordstart";
-  static const sleepStartButtonKey = "tipstate.sleepstart";
-  static const wakeupButtonKey = "tipstate.wakeup";
-  static const firstRecordKey = "tipstate.firstrecord";
-  static const tableKey = "tipstate.table";
-  static const chartKey = "tipstate.chart";
+  static const recordStartKey = "tip.state.recordstart";
+  static const sleepStartButtonKey = "tip.state.sleepstart";
+  static const wakeupButtonKey = "tip.state.wakeup";
+  static const firstRecordKey = "tip.state.firstrecord";
+  static const tableKey = "tip.state.table";
+  static const chartKey = "tip.state.chart";
 
   static final _allKeys = [
     recordStartKey,

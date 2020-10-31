@@ -2,6 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import '../../services/messages.dart';
 import '../../tabs/chart/chart_tab_page.dart';
 import '../../tabs/table/table_tab_page.dart';
 import '../../tabs/watch/watch_tab_page.dart';
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WatchTabPage(),
     TableTabPage(),
     ChartTabPage(),
+    // SettingTabPage(),
   ];
 
   @override
@@ -41,17 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _tabIndex,
         items: [
           const BottomNavigationBarItem(
-            title: Text("기록"),
+            label: kText_TabMenuWatch,
             icon: const Icon(FluentSystemIcons.ic_fluent_clock_filled),
           ),
           const BottomNavigationBarItem(
-            title: Text("일지"),
+            label: kText_TabMenuTable,
             icon: const Icon(FluentSystemIcons.ic_fluent_clipboard_text_filled),
           ),
           const BottomNavigationBarItem(
-            title: Text("통계"),
+            label: kText_TabMenuStatistics,
             icon: const Icon(FluentSystemIcons.ic_fluent_poll_filled),
           ),
+          // const BottomNavigationBarItem(
+          //   label: kText_TabMenuSettings,
+          //   icon: const Icon(FluentSystemIcons.ic_fluent_settings_filled),
+          // ),
         ],
       ),
       floatingActionButton: Column(

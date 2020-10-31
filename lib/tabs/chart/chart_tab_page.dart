@@ -1,10 +1,11 @@
-import 'package:baby_sleep_time/services/store/tip_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/date_header.dart';
 import '../../components/tip_text.dart';
 import '../../services/chart/chart_data.dart';
 import '../../services/chart/generate_chart_data.dart';
+import '../../services/messages.dart';
+import '../../services/store/tip_state.dart';
 import '../../utils/date_converter.dart';
 import 'components/stacked_bar_chart.dart';
 
@@ -68,8 +69,8 @@ class _ChartTabPageState extends State<ChartTabPage> {
                 right: 12,
                 child: Column(
                   children: [
-                    _LegendLabel(color: helpColor, label: "도움"),
-                    _LegendLabel(color: sleepColor, label: "수면"),
+                    _LegendLabel(color: helpColor, label: kText_ActionHelp),
+                    _LegendLabel(color: sleepColor, label: kText_ActionSleep),
                   ],
                 ),
               )
@@ -80,21 +81,30 @@ class _ChartTabPageState extends State<ChartTabPage> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               child: Text.rich(TextSpan(
-                  text: "지난 1주일간\n",
+                  text: kText_ReportTitle,
                   children: []
                     ..addAll(_buildStatText(
-                        "수면 시간은", averageSleepHours, "시간", theme.accentColor))
+                        kText_ReportSleepHours,
+                        averageSleepHours,
+                        kText_ReportHourUnit,
+                        theme.accentColor))
                     ..addAll(_buildStatText(
-                        "수면 횟수는", averageSleepCount, "번", theme.accentColor))
-                    ..addAll(_buildStatText("도움 시간은", averageHelpMinutes,
-                        "분 입니다.", theme.accentColor)),
+                        kText_ReportSleepCount,
+                        averageSleepCount,
+                        kText_ReportCountUnit,
+                        theme.accentColor))
+                    ..addAll(_buildStatText(
+                        kText_ReportHelpMinutes,
+                        averageHelpMinutes,
+                        kText_ReportMinuteUnit + " " + kText_ReportEnd,
+                        theme.accentColor)),
                   style: TextStyle(fontSize: 20.0, height: 1.8))),
             ),
             !TipState.instance.isShown(TipState.chartKey)
                 ? GestureDetector(
                     onTap: () => setState(
                         () => TipState.instance.markAsShown(TipState.chartKey)),
-                    child: TipText(text: "통계를 통해 수면 습관이 나아지고\n있는 걸 확인하세요."))
+                    child: TipText(text: kText_TipStatistics))
                 : Container(),
           ],
         ),
@@ -106,7 +116,7 @@ class _ChartTabPageState extends State<ChartTabPage> {
       String label, String value, String unit, Color valueColor) {
     return [
       // ignore: unnecessary_brace_in_string_interps
-      TextSpan(text: "   평균 ${label} "),
+      TextSpan(text: "   ${kText_ReportAverage} ${label} "),
       TextSpan(
           text: value,
           style: TextStyle(color: valueColor, fontWeight: FontWeight.bold)),

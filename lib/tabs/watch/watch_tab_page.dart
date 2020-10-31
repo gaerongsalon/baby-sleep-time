@@ -13,6 +13,7 @@ import '../../models/sleep_progress.dart';
 import '../../models/watch_state.dart';
 import '../../services/debug/clear_database.dart';
 import '../../services/debug/generate_test_data.dart';
+import '../../services/messages.dart';
 import '../../services/store/store.dart';
 import '../../services/store/tip_state.dart';
 import 'components/clock.dart';
@@ -78,11 +79,15 @@ class _WatchTabPageState extends State<WatchTabPage>
         children: [
           GestureDetector(
               onLongPress: () => _debugAction(
-                  context: context, text: "테스트 데이터 생성", act: generateTestData),
+                  context: context,
+                  text: kText_DebugGenerateTestData,
+                  act: generateTestData),
               child: _buildTitle()),
           GestureDetector(
               onLongPress: () => _debugAction(
-                  context: context, text: "모든 데이터 삭제", act: _clearDatabase),
+                  context: context,
+                  text: kText_DebugDeleteAllData,
+                  act: _clearDatabase),
               child: _buildClock()),
           _buildActionButtons(),
           _buildLastHistory(),
@@ -96,8 +101,10 @@ class _WatchTabPageState extends State<WatchTabPage>
       padding: const EdgeInsets.only(bottom: 48.0),
       child: Text(
         _state == WatchState.Ready
-            ? "수면의식 시작해볼까요?"
-            : _state == WatchState.Help ? "아이를 믿고 기다려봐요." : "수고했어요!",
+            ? kText_WatchStartHelp
+            : _state == WatchState.Help
+                ? kText_WatchHelpProgress
+                : kText_WatchSleepProgress,
         style: TextStyle(fontSize: 24),
       ),
     );
@@ -109,7 +116,9 @@ class _WatchTabPageState extends State<WatchTabPage>
       child: Clock(
         startTime: _state == WatchState.Ready
             ? DateTime.now()
-            : _state == WatchState.Help ? _helpStart : _sleepStart,
+            : _state == WatchState.Help
+                ? _helpStart
+                : _sleepStart,
         initialGoing: _state != WatchState.Ready,
       ),
     );
@@ -201,24 +210,25 @@ class _WatchTabPageState extends State<WatchTabPage>
   void _showStartButtonCoach() {
     TipState.instance.doIfPossible(TipState.recordStartKey, (mark) async {
       await showCoach(
-          globalKey: _actionGlobalKey,
-          text: "아이가 스스로 잠들 수 있도록\n도와주는 수면 도움 시간을 기록해보세요");
+          globalKey: _actionGlobalKey, text: kText_TipWatchStartHelp);
       mark();
     });
   }
 
   void _showHelpButtonCoach() {
     TipState.instance.doIfPossible(TipState.sleepStartButtonKey, (mark) async {
-      await showCoach(globalKey: _actionGlobalKey, text: "잠에 든다면 아이콘을 누르세요");
       await showCoach(
-          globalKey: _cancelGlobalKey, text: "아이가 너무 힘들어 하면\n그만 둘 수 있어요");
+          globalKey: _actionGlobalKey, text: kText_TipWatchStartSleep);
+      await showCoach(
+          globalKey: _cancelGlobalKey, text: kText_TipWatchHaltCancel);
       mark();
     });
   }
 
   void _showSleepButtonCoach() {
     TipState.instance.doIfPossible(TipState.wakeupButtonKey, (mark) async {
-      await showCoach(globalKey: _actionGlobalKey, text: "잠에서 깨어났다면 아이콘을 누르세요");
+      await showCoach(
+          globalKey: _actionGlobalKey, text: kText_TipWatchSleepEnd);
       mark();
     });
   }
@@ -232,7 +242,7 @@ class _WatchTabPageState extends State<WatchTabPage>
             return Rect.fromLTWH(rect.left + 32.0, rect.top + 72.0,
                 rect.width - 64.0, rect.height - 72.0);
           },
-          text: "첫 수면기록이 완성되었어요");
+          text: kText_TipWatchFirstRecord);
       mark();
     });
   }
@@ -253,7 +263,11 @@ class _WatchTabPageState extends State<WatchTabPage>
     }
 
     if ((await promptDialog(
-            context: context, title: "디버그", body: text, yes: "네", no: "아니오")) ==
+            context: context,
+            title: kText_ActionDebug,
+            body: text,
+            yes: kText_ActionYes,
+            no: kText_ActionNo)) ==
         true) {
       await act();
       setState(() {});

@@ -1,4 +1,5 @@
-import 'package:baby_sleep_time/services/store/tip_state.dart';
+import '../../services/messages.dart';
+import '../../services/store/tip_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
@@ -44,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
-                  child: Text("자장자장",
+                  child: Text(kText_AppTitle,
                       style: TextStyle(
                           decoration: TextDecoration.none, fontSize: 24.0)),
                 )

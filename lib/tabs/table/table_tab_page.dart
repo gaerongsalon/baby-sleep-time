@@ -1,3 +1,4 @@
+import '../../services/messages.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -64,7 +65,7 @@ class _TableTabPageState extends State<TableTabPage> {
               ? GestureDetector(
                   onTap: () => setState(
                       () => TipState.instance.markAsShown(TipState.tableKey)),
-                  child: TipText(text: "하루 동안 아이의 수면 도움 행동 시간,\n수면 시간을 기록합니다."))
+                  child: TipText(text: kText_TipTable))
               : Container(),
         ],
       ),
@@ -76,7 +77,7 @@ class _TableTabPageState extends State<TableTabPage> {
       child: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: TextDivider(
-          text: "아직 기록이 없습니다.",
+          text: kText_TableNoData,
         ),
       ),
     );
@@ -104,9 +105,11 @@ class _TableTabPageState extends State<TableTabPage> {
             TableRow(children: [
               TableCell(child: Text("")),
               _IconCell(
-                  icon: FluentSystemIcons.ic_fluent_people_filled, label: "도움"),
+                  icon: FluentSystemIcons.ic_fluent_people_filled,
+                  label: kText_ActionHelp),
               _IconCell(
-                  icon: FluentSystemIcons.ic_fluent_sleep_filled, label: "수면"),
+                  icon: FluentSystemIcons.ic_fluent_sleep_filled,
+                  label: kText_ActionSleep),
             ])
           ]..addAll(_histories.map((item) => TableRow(children: [
                 _TextCell(
@@ -133,10 +136,10 @@ class _TableTabPageState extends State<TableTabPage> {
   void _deleteItem(SleepHistory history) async {
     if ((await promptDialog(
             context: context,
-            title: "삭제할까요?",
-            body: "선택한 항목을 삭제합니다.",
-            yes: "삭제",
-            no: "취소")) ==
+            title: kText_TableConfirmToDelete,
+            body: kText_TableDeleteLabel,
+            yes: kText_ActionDelete,
+            no: kText_ActionCancel)) ==
         true) {
       getSleepHistoryDao().deleteSleepHistory([history]).then((_) {
         setState(() {
